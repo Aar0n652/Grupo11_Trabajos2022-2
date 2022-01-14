@@ -1,0 +1,455 @@
+---
+title: "Tarea 1"
+author: "Quiroz Cesar, Quispe Danae & Ricra Gabriel"
+date: "18/11/2021"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Parte 1
+
+# 1 Calcula los valores aproximados de:
+
+## 1 a.
+Reemplazamos los datos que nos brinda el problema teniendo en cuenta que  el “*” es la multiplicacion y tanto como en numerador y denominador asignarle un parentesis para que se pueda operar el problema en R.
+
+```{r}
+(0.3*0.15)/(0.3*0.15+0.2*0.8+0.5*0.12)
+```
+
+## 1 b.
+Asignamos los datos teniendo en consideración que “^” representa a una potencia y usamos la funcion  *factorial* de 6 multiplicando al “e” elevado a la -5 para ello usamos la función  *expo* que nos indica el “e” y con un paréntesis que vendría a ser la potencia.
+
+```{r}
+((5^6)/(factorial(6)))*exp(-5)
+```
+
+## 1 c.
+En el numerador usamos la función *choose* que nos calcula el numero de combinaciones de ´ k eventos en n repeticiones multiplicado al 0.4 elevado a la 7 y 0.6 elevado a la 13.
+
+```{r}
+choose(20,7)*0.4^7*0.6^13
+```
+
+# 2 Realizar la siguiente suma
+
+## 2 a.
+Como nos piden la suma de los primeros 1000 primeros números naturales usamos la función *sum* que nos da la suma de los elementos de x.
+Ademas anadimos en un parentesis “1:1000” que significa desde el elemento 1 hasta el elemento 1000.
+
+```{r}
+sum(1:1000)
+```
+
+## 2 b.
+Nos damos cuenta que es una suma notable de potencias consecutivas (cociente notable), en consecuencia, aplicamos la formula ya conocida.
+
+```{r}
+((2^11)-1)/(2-1)
+```
+
+# 3 El vector *grupo* representa el grupo al que pertenece una serie de alumnos
+
+## 3 a. ¿Cuántos elementos tiene?
+Se solicita la cantidad de elementos del vector *grupo* por lo que haremos empleo del codigo *length*.
+
+```{r}
+load(url("https://goo.gl/uDzU8v"))
+length(grupo)
+```
+
+## 3 b. ¿En que posiciones del vector está la letra “A"?
+En este caso, para este apartado usaremos el código *which* agregando entre paréntesis *grupo == “A”*, lo que nos indicaría en qué posiciones del grupo se encuentra la letra A.
+ 
+```{r}
+load(url("https://goo.gl/uDzU8v"))
+which(grupo == "A")
+```
+
+# 4 El vector *nota* representa la nota de un examen de los alumnos que estan en los grupos del vector *grupo*.
+
+## 4 a. ¿Cuanto suman todas las notas?
+Usamos la funcion  *sum* que nos da la suma de los elementos de x y para el presente problema el elemento x seria nota.
+
+```{r}
+load(url("https://goo.gl/uDzU8v"))
+sum(nota)
+```
+
+## 4 b. ¿Cual es la media aritmetica de todas las notas?
+Sabemos que la media aritmetica es el promedio, en consecuencia, usamos la funcion mean que nos da el promedio de los elementos de x, para el problema x sería nota.
+
+```{r}
+load(url("https://goo.gl/uDzU8v"))
+mean(nota)
+```
+
+## 4 c. ¿En que posiciones estan las notas mayores de 7.0?
+Como en el anterior ejercicio, empleamos la función *which* agregando entre paréntesis *nota > 7*, indicando las posiciones de las notas mayores a 7.
+
+```{r}
+load(url("https://goo.gl/uDzU8v"))
+which(nota > 7)
+```
+
+## 4 d. Visualiza las notas ordenadas de mayor a menor
+Utilizaremos en este caso el codigo *sort*, que ordena elementos ascendentemente. Sin embargo nos piden de la manera contraria por lo que le anadimos al comienzo el código *rev*.
+
+```{r}
+load(url("https://goo.gl/uDzU8v"))
+rev(sort(nota))
+```
+
+## 4 e. ¿En que posición esta la nota maxima?
+Para identificar la posición de la nota máxima el código a emplear es *which.max*.
+
+```{r}
+load(url("https://goo.gl/uDzU8v"))
+which.max(nota)
+```
+
+# 5 A partir de los vectores *grupo* y *nota* definidos.
+
+## 5 a. Suma las notas de los 10 primeros alumnos del vector
+Usamos el código *sum* indicando entre paréntesis las 10 primeras notas del vector *nota*.
+
+```{r}
+load(url("https://goo.gl/uDzU8v"))
+sum(nota[c(1:10)])
+```
+
+## 5 b. ¿Cuantos alumnos hay del grupo C?
+Para conocer la cantidad de alumnos en el grupo C hemos utilizado el codigo *length* y dentro del parentesis hemos usado una funcion que solo restrinja a los alumnos del grupo C.
+
+```{r}
+load(url("https://goo.gl/uDzU8v"))
+length(which(grupo == "C"))
+```
+
+## 5 c. ¿Cuantos alumnos han aprobado?
+Lo mismo que en el anterior ejercicio, diferenciando esta vez que el vector *nota* sea mayor o igual a 5. 
+```{r}
+load(url("https://goo.gl/uDzU8v"))
+length(which(nota >= 5))
+```
+
+## 5 d. ¿Cuantos alumnos del grupo B han aprobado?
+El ejercicio nos solicita la cantidad de alumnos que han aprobado, del grupo B, por lo que volvemos a emplear *length* restringiendo a los alumnos del grupo B y que la nota sea mayor o igual a 5.
+
+```{r}
+load(url("https://goo.gl/uDzU8v"))
+length(which((grupo == "B") & (nota >= 5)))
+```
+
+## 5 e. ¿Que porcentaje de alumnos del grupo C han aprobado?
+Si bien para este ejercicio se puede usar la función *quantile*, hemos optado por usar *length* otra vez. Empleando en el numerador el mismo código del 5.d., cambiando el grupo por C, y en el numerador la cantidad total de alumnos del grupo C, todo esto multiplicado por 100.
+
+```{r}
+load(url("https://goo.gl/uDzU8v"))
+length(which((grupo == "C") & (nota >= 5)))/length(which(grupo == "C"))*100
+```
+
+## 5 f. ¿De que grupos son la maxima y minima notas de toda la muestra?
+Para saber cuales son los grupos donde están la max y min nota se utiliza el siguiente código:
+
+Maxima nota.
+
+```{r}
+load(url("https://goo.gl/uDzU8v"))
+grupo[(nota == max(nota))]
+```
+
+Minima nota.
+
+```{r}
+load(url("https://goo.gl/uDzU8v"))
+grupo[(nota == min(nota))]
+```
+
+## 5 g. Nota media de los alumnos de grupo A y B, juntos, considerando solo a los que han aprobado.
+En este ejercicio piden la nota media de los alumnos que hayan aprobado de los grupos A y B, para eso utilizaremos la función *mean* como se aprecia en el código: 
+
+Nota media A de los aprobados.
+
+```{r}
+load(url("https://goo.gl/uDzU8v"))
+mean(nota[(grupo=="A") & (nota >=5)],)
+```
+
+Nota media B de los aprobados.
+
+```{r}
+load(url("https://goo.gl/uDzU8v"))
+mean(nota[(grupo=="B") & (nota >=5)],)
+```
+
+# 6 Calcula el percentil 66 de las notas de todos los alumnos, y también de los alumnos del grupo C.
+
+Debido a que nos piden el percentiles de las notas de todos los alumnos usamos la funcion *quantil(x, probs=)* donde el parametro x indica la variable de interés para la cual se quieren calcular los cuantiles en el problema la variable de interes es “nota”, por otro lado, el parametro probs sirve para definir los cuantiles de interes y para el problema es 0.66.
+
+```{r}
+load(url("https://goo.gl/uDzU8v"))
+quantile(nota, probs = 0.66)
+```
+
+Ahora nos piden el percentil 66 de las notas de los alumnos del grupo C, de igual manera usamos la funcion *quantil(x, probs=)* donde el parametro x seria nota, pero abriendo corchetes el grupo que nos piden, es decir, el grupo “c”, luego para el parametro probs es 0.66.
+
+```{r}
+load(url("https://goo.gl/uDzU8v"))
+quantile(nota[grupo=="C"], probs = 0.66)
+```
+
+# 7 Un alumno tiene una nota de 4.9. ¿Que porcentaje, del total de alumnos, tiene una nota menor o igual que la suya? ¿Y que porcentaje tiene una nota mayor o igual que la suya?
+
+En primer lugar hallamos el porcentaje mejor o igual a 4.9 para ello usamos la funcion *length* que nos da la longitud de elementos seguido de un  parentesis  usamos la funcion *which*, posteriormente asignamos que la nota debe ser menor o igual a 4.9 despues de ello lo dividimos entre la cantidad total de alumnos (192 alumnos) y lo multiplicamos por 100 para obtener el porcentaje que nos pide el problema.
+
+```{r}
+load(url("https://goo.gl/uDzU8v"))
+((length(which(nota<=4.9)))/192)*100
+```
+
+Ahora hallamos el porcentaje mayor o igual a 4.9 y de manera similar al problema anterior, es decir, usamos la  funcion *length* que nos da la longitud de elementos seguido de un  parentesis  usamos la funcion *which*, posteriormente asignamos que la nota debe ser mayor o igual a 4.9 despues de ello lo dividimos entre la cantidad total de alumnos (192 alumnos) y lo multiplicamos por 100 para obtener el porcentaje que nos solicita el problema.
+
+```{r}
+load(url("https://goo.gl/uDzU8v"))
+((length(which(nota>=4.9)))/192)*100
+```
+
+# 8 Realiza el grafico de diagramas de caja de las notas de cada grupo, para poder comparar el nivel de cada uno de ellos.
+
+En el presente ejercicio solicitan un diagrama de caja de las notas de cada grupo, por lo que usaremos la funcion *boxplot()* como está en el codigo:
+
+```{r}
+load(url("https://goo.gl/uDzU8v"))
+boxplot(nota[grupo=="A"], nota[grupo=="B"], nota[grupo=="C"], nota[grupo=="D"], nota[grupo=="E"])
+```
+
+# 9 Si la variable *conc* recoge la concentracion de plomo (en ppm) en el aire de cierta zona durante un día completo.
+
+## 9 a. ¿Cual ha sido la concentracion maxima?
+El problema nos pide la concentración máxima por ello usaremos la función max(x) donde dicha función nos da el valor maximo en el objeto x. Aplicandolo en el problema el objeto x es la concentracion.
+
+```{r}
+load(url("https://goo.gl/uDzU8v"))
+max(conc)
+```
+
+## 9 b. ¿En cuantos de los muestreos se ha superado la concentracion de 40.0 ppm?
+La cantidad de los muestreos superiores a 40 ppm se puede verificar con *length()*, similar al caso de la 5.c.
+
+```{r}
+load(url("https://goo.gl/uDzU8v"))
+length(which(conc>40))
+```
+
+## 9 c. ¿Cual ha sido la concentracion media del dia?
+El problema nos solicita la concentracion que se dio al medio dia, en consecuencia, aplicamos la funcion *mean* que nos da el promedio de los elementos (concentracion).
+
+```{r}
+load(url("https://goo.gl/uDzU8v"))
+mean(conc)
+```
+
+## 9 d. ¿Cuales fueron las 10 mediciones mas bajas del dia?
+Las mediciones con poca concentracion que se dan en un dia suelen ser las primeras, en el ejercicio nos piden las 10 más bajas, por lo que se usa *head(sort())* en el vector.
+
+```{r}
+load(url("https://goo.gl/uDzU8v"))
+head(sort(conc),10)
+```
+
+## 9 e. Si la primera medida fue a las 00:00. ¿A que hora del dia se alcanzo la concentracion maxima?
+Debido a que nos piden hallar la hora donde se alcanzo la concentracion maxima teniendo en cuenta un intervalo de 5 minutos. Para ello usamos la funcion *which.max(x)* para obtener el indice del elemento maximo de x y para este caso el x es la concentracion, pero le restamos uno ya que al inicio la concentracion es 0 y luego le multiplicamos por el intervalo de 5 minutos para conseguir la cantidad de minutos, pero como nos piden las horas empezando desde las 00:00 horas pasamos los minutos a horas, es decir, lo dividimos entre 60 para obtener el numero de horas.
+
+```{r}
+load(url("https://goo.gl/uDzU8v"))
+(c(which.max(conc))-1)*5
+```
+
+
+
+# Parte 2
+
+# 1 Graficar los puntos (1,1), (2,4), (3,6), (4,8), (5,25), (6,36), (7,49), (8,61), (9,81), (10,100) en un plano utilizando RStudio.
+Para la creacion de un diagrama de punto se observa que los puntos dados son coordenadas, por lo que realizamos los vectores x e y, para luego utilizar la funcion *plot(,)*.
+
+```{r}
+x <- 1:10
+y <- c(1,4,6,8,25,36,49,64,81,100)
+plot(x,y)
+```
+
+# 2 Ingresar la matriz A en RStudio
+El problema solicita crear una matriz en Rstudio, entonces para crear dicha matriz usamos la función *matrix* y asignamos un vector con los numeros que nos dan en dicha matriz,pero especificando el numero de filas y columnas.
+
+```{r}
+A <- matrix(c(1,2,3,4,2,4,6,8,3,6,9,12), nrow = 4 , ncol = 3)
+A
+```
+
+# 3 Ingresar la matriz identidad de tamaño 3
+El ejercicio pide crear una matriz unitaria, por lo que utilizamos *diag()* y en el argumento se coloca la cantidad de elementos de la diagonal principal siendo en este caso 3.
+
+```{r}
+I <- diag(3)
+I
+```
+
+# 4 Crea una función que cree una matriz nula ingresando las dimensiones
+Para la creacion de una funcion empleamos *function()*, indicando los cambios como se aprecia en el codigo:
+
+```{r}
+Z<- function(n){ I<-diag(n); for(i in 1:n){I[i,i]=0}; return(I)}
+Z(4)
+Z(5)
+```
+
+# 5 Modificar la matriz *diag(4)*, para que se parezca a la matriz B
+En este ejercicio solicita el cambio de la matriz unitaria de diagonal 4 con los datos (0,2,3,4) por lo que primero se le coloca un nombre a la matriz para luego realizar el cambio de la siguiente manera:
+
+```{r}
+B <- diag(4)
+B[1,1]=0
+B[2,2]=2
+B[3,3]=3
+B[4,4]=4
+B
+```
+
+# 6 Obtener la matriz transpuesta de A (ejercicio 2)
+El problema nos pide hallar la transpuesta del ejercicio 2, es decir, las columnas de A pasarán a ser filas y sus filas pasarán a ser columnas. Entonces empleamos la funcion t y entre parentesis la matriz A.
+
+```{r}
+A <- matrix(c(1,2,3,4,2,4,6,8,3,6,9,12), nrow = 4 , ncol = 3)
+t(A)
+```
+
+# 7 Realizar las siguientes operaciones *A+B*, *A−B*, *3B* y *AB*
+Nos piden hallar una serie de operaciones con las matrices A y B entonces las matriz A lo realizamos con la funcion *matrix* especificando su numero de columnas y filas( problema 2) y para B lo realizamos como en el problema 5 y luego realizamos las operaciones que nos pide el problema.
+
+```{r}
+A <- matrix(c(1,2,3,4,2,4,6,8,3,6,9,12,0,0,0,0), nrow = 4 , ncol = 4)
+B <- diag(4)
+B[1,1]=0
+B[2,2]=2
+B[3,3]=3
+B[4,4]=4
+(A+B)
+(A-B)
+(3*B)
+(A%*%B)
+```
+
+# 8 Crea una funcion para calcular *P^(6)*
+Para la creacion de una funcion empleamos *function()*, indicando los cambios como se aprecia en el codigo:
+
+```{r}
+PM <- function(M,n){S=M; for(i in 2:n){S=S%*%M}; print(S)}
+P <- matrix(c(1,-2,1,2,4,0,3,-2,1), ncol=3, nrow=3)
+PM(P,6)
+```
+
+# 9 Resolver el sistema de ecuaciones
+Para el presente sistema de ecuaciones se crea una matriz con los coeficientes del primer miembro y tambien un vector con los elementos del segundo miembro. Para resolver utilizaremos la funcion *solve()*.
+
+```{r}
+A <- matrix(c(3,9,3,-1,-2,1,1,1,-2), ncol=3,nrow=3)
+x <- c(-1,-9,-9)
+solve(A,x)
+```
+
+# 10 Utilizando la ayuda de R, investigue para que sirven las funciones *eigen()* y *det()*
+Para el presente problema nos piden investigar para que sirven tales funciones y para ello iremos al apartado de help luego en el buscador ponemos las funciones que nos piden.
+
+help(eigen)
+eigen(): Calcula autovalores y autovectores de matrices numericas (dobles, enteras, logicas) o complejas
+
+help(det)
+det(): det calcula el determinante de una matriz. El determinante es una funcion generica que devuelve por #separado el modulo del determinante, opcionalmente en la escala logaritmica, y el signo del determinante.
+
+# 11 
+
+```{r}
+B <- matrix(c(c(1:10), seq(2,20,2), seq(3,30,3), seq(4,40,4), seq(5,50,5)), ncol=5, nrow = 10)
+a <- matrix(c(0,1,0,0,1,1,0,1,1,0,0,1,0,0,1,1,0,1,0,1,0,1,0,1,0), ncol=5)
+oo <- matrix(c(rep(0,50)), ncol=5)
+E <- matrix(cbind((B%*%a),oo), nrow=10)
+o <- matrix(c(rep(0,25)), nrow = 5)
+A <- matrix(rbind(a,o), ncol=5, nrow = 10)
+(E-(A%*%t(B)))
+```
+
+# 12
+
+```{r}
+x <- matrix(c(1,1,1,1,1,1,-1,0,1,2), ncol = 2)
+y <- matrix(c(0,0,1,1,3),ncol = 1)
+h <- matrix(c(0,0,0,0,0), nrow = 5)
+M <- matrix(rbind(y,h), ncol = 2)
+(((t(x)%*%x)^-1)%*%t(x)%*%M)
+```
+
+# 13 Diferencia entre años consecutivos de CO2
+
+```{r}
+load(url("https://goo.gl/uDzU8v"))
+data(co2)
+means = aggregate(co2, FUN=mean)
+year = as.vector(time(means))
+co2 = as.vector(means)
+diff(co2)
+```
+
+Plot con lineas y puntos mostrando las diferencias consecutivas de CO2 en función del tiempo (1960, 1961, etc…), en negrita
+
+```{r}
+load(url("https://goo.gl/uDzU8v"))
+data(co2)
+means = aggregate(co2, FUN=mean)
+year = as.vector(time(means))
+co2 = as.vector(means)
+y <- c(0, diff(co2))
+plot(year,y, type = "o", pch = 20, xlab = "Años", ylab = "Diferencia de concentración de CO2", 
+     main = "Diferencias de CO2 entre años consecutivos", col = "blue", font = 2)
+```
+
+La diferencia de concentración de CO2 entre 2020 y 2019 fue igual a 2.64. Agregar un punto rojo representando esa diferencia al plot ya creado (usar una forma diferente, como pch=4)
+
+```{r}
+load(url("https://goo.gl/uDzU8v"))
+data(co2)
+means = aggregate(co2, FUN=mean)
+year = as.vector(time(means))
+co2 = as.vector(means)
+y <- c(0, diff(co2))
+plot(year, y, xlim=c(1959, 2020), type = "o", pch = 20, xlab = "Años", ylab = "Diferencia de concentración de CO2", 
+     main = "Diferencias de CO2 entre años consecutivos", col = "blue", font = 2)
+points(2020, 2.64, pch = 4, col = "red")
+```
+
+# 14
+# 14 a. Lee el archivo *rainfall.csv* como un *data.frame*
+
+```{r}
+rainfalldf <- read.csv("C:/Users/Usuario/Downloads/rainfall.csv")
+rainfalldf
+```
+
+# 14 b. Calcula e imprime un vector con los nombres de las estaciones donde al menos uno de los meses tiene una precipitacion superior a 180mm.
+En el problema creamos un read.csv y especificamos la direccion donde se encuentra el csv luego con el signo dolar especificamos lo que se nos pide en cada mes, es decir , con el signo dolar hallaremos la precipitación superior a 180mm en cada mes
+
+```{r}
+rainfalldf <- read.csv("C:/Users/Usuario/Downloads/rainfall.csv")
+rain180 <- rainfalldf[(rainfalldf$sep > 180) | (rainfalldf$oct > 180) | (rainfalldf$nov > 180) | (rainfalldf$dec > 180) | (rainfalldf$jan > 180) | (rainfalldf$feb > 180) | (rainfalldf$mar > 180) | (rainfalldf$apr > 180) | (rainfalldf$may > 180),]
+rain180$name
+```
+
+
+
+
+
+
+

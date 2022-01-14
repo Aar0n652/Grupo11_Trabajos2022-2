@@ -1,0 +1,325 @@
+---
+title: "dplyr"
+author: "Cesar Quiroz, Danae Quispe & Gabriel Ricra"
+date: "14/1/2022"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Instalación de paquetes
+```{r}
+library(nycflights13)
+library(tidyverse)
+```
+
+# 1. Dplyr - filter
+## 1.1 Encuentra todos los vuelos que:
+### Tuvieron un retaso de llegada de dos o más horas
+```{r}
+filter(flights, arr_delay >= 120)
+```
+
+### Volaron a Houston (IAH oHOU)
+```{r}
+filter(flights,dest == "IAH" | dest ==  "HOU" )
+```
+
+### Fueron operados por United, American o Delta
+```{r}
+filter(flights, carrier == "UA" | carrier == "AA" | carrier == "DL")
+```
+
+### Partieron en invierno del hemisferio sur (julio, agosto y septiembre)
+```{r}
+filter(flights, month == 07 | month == 08 | month == 09)
+```
+
+### Llegaron más de dos horas tarde, pero no salieron tarde
+```{r}
+flights %>% 
+  filter(arr_delay > 120) %>% 
+  filter(dep_delay == 0)
+```
+
+### Se retrasaron por lo menos una hora, pero repusieron más de 30 minutos en vuelo
+```{r}
+flights %>%
+  filter(dep_delay >= 60) %>%
+  filter(arr_delay == 30)
+```
+
+### Partieron entre la medianoche y las 6 a.m. (incluyente)
+```{r}
+filter(flights, sched_dep_time %in% c(1:600) | sched_dep_time == 2400)
+```
+
+## 1.2 Otra función de dplyr que es útil para usar filtros es between(). ¿Qué hace? ¿Puedes usarla para simplificar el código necesario para responder a los desafíos anteriores?
+```{r}
+filter(flights, between(month, 2, 3))
+```
+
+## 1.3 ¿Cuántos vuelos tienen datos faltantes en horario_salida? ¿Qué otras variables tienen valores faltantes? ¿Qué representan estas filas?
+```{r}
+filter(flights, is.na(dep_time))
+
+#Los vuelos que tienen `NA` en su horario de salida, también lo tienen en el horario de llegada, por lo que deducimos que son vuelos que han sido cancelados.
+```
+
+## 1.4 ¿Por qué NA^0 no es faltante? ¿Por qué NA | TRUE no es faltante? ¿Por qué FALSE & NA no es faltante? ¿Puedes descubrir la regla general? (¡NA * 0 es un contraejemplo complicado!)
+```{r}
+x <- c(NA)
+is.na(x) 
+#La función `is.na()` determina si falta un valor y devuelve un valor lógico `TRUE` en los casos en que es NA.
+
+x^0
+#Dado que el NA podría tomar cualquier valor, es práctico pensar que cualquier número (aunque sea muy grande) a la potencia cero es igual a 1.
+
+x | TRUE 
+#Es igual a TRUE pues el NA se entiende como un valor lógico (`TRUE` or `FALSE`) y por lógica proposicional es siempre igual a `TRUE`.
+
+x & FALSE
+#Es igual a `TRUE` pues el NA se entiende como un valor lógico (`TRUE` or `FALSE`) y por lógica proposicional es siempre `FALSE`.
+
+x * 0
+Inf*0
+#En este contraejemplo puede ser útil pensar que el `NA` puede tomar cualquier valor, incluso podría ser un número muy grande; el cual al multiplicarse por cero nos da una indeterminación que `R` define como `NaN` (Not a Number). Por otro lado, si el `NA` fuese un valor pequeño, entonces `NA*0` sería igual a cero. Luego, es mejor pensar en `x*0` como un `NA` porque no sabemos en cual de los dos casos anteriores estamos.
+```
+
+# 2. Dplyr - arrange
+## 2.1 ¿Cómo podrías usar arrange() para ordenar todos los valores faltantes al comienzo? (Sugerencia: usa is.na()).
+```{r}
+arrange(flights,desc(is.na(dep_time)))
+```
+
+## 2.2 Ordena vuelos para encontrar los vuelos más retrasados. Encuentra los vuelos que salieron más temprano.
+```{r}
+arrange(flights, desc(dep_delay))
+```
+
+## 2.3 Ordena vuelos para encontrar los vuelos más rápidos (que viajaron a mayor velocidad).
+```{r}
+arrange(flights, desc(distance/air_time))
+```
+
+## 2.4 ¿Cuáles vuelos viajaron más lejos? ¿Cuál viajó más cerca?
+```{r}
+arrange(flights,desc(distance))
+arrange(flights,distance)
+```
+
+# 3. Dplyr - select
+## 3.1 Haz una lluvia de ideas sobre tantas maneras como sea posible para seleccionar dep_time, dep_delay, arr_time, and arr_delay de flights.
+```{r}
+select(flights, dep_time, dep_delay, arr_time, arr_delay)
+```
+
+## 3.2 ¿Qué sucede si incluyes el nombre de una variable varias veces en una llamada a select()?
+```{r}
+#Utilizando ‘help(select)’ se puede emplear para cambiar el nombre de las variables. Contrario a lo pensado con la definición que te da R, aunque se incluya más de una vez una variable al usar la función solo se considerará una vez.
+```
+
+## 3.3 ¿Qué hace la función any_of()? ¡¿Por qué podría ser útil en conjunto con este vector?
+```{r}
+valores_de_prueba  <- c ( " any_of" , " month " , "day" ," arr_delay "," arr_time " )
+
+#Esta función ´any_of()´ nos permite indicar las variables que queremos seleccionar con un nombre determinado del vector que las contiene.
+
+#Además, esta función selecciona las variables que están en el vector ´valores_de_prueba´
+```
+
+# 4. Dplyr - mutate
+## 4.1 Las variables horario_salida y salida_programada tienen un formato conveniente para leer, pero es difícil realizar cualquier cálculo con ellas porque no son realmente números continuos. Transfórmalas hacia un formato más conveniente como número de minutos desde la medianoche.
+```{r}
+#Los datos de estas variables son de tal forma que las 8:46 AM toman el valor 846. 
+
+846%/%100
+846%/%100 *60
+846 %% 100
+846 %/% 100 * 60 + 846 %% 100
+ 
+mutate(flights, salida_programada_minu = (sched_dep_time%/%100*60 + sched_dep_time%%100))
+mutate(flights, horario_salida_minu = (dep_time%/%100*60 + dep_time%%100))
+```
+
+## 4.2 Compara tiempo_vuelo con horario_llegada - horario_salida. ¿Qué esperas ver? ¿Qué ves? ¿Qué necesitas hacer para arreglarlo?
+```{r}
+mutate(flights, air_time = (arr_delay - dep_delay))
+```
+
+## 4.3 Compara horario_salida, salida_programada, y atraso_salida. ¿Cómo esperarías que esos tres números estén relacionados?
+```{r}
+flights %>%
+  mutate(dep_time, dep_time=dep_time%%100+(dep_time-dep_time%%100)/100*60) %>%
+  mutate(sched_dep_time, sched_dep_time=sched_dep_time%%100+(sched_dep_time-sched_dep_time%%100)/100*60) %>%
+  select(dep_time, sched_dep_time, dep_delay) %>%
+  filter(sched_dep_time + dep_delay != dep_time)
+```
+
+## 4.4 Encuentra los 10 vuelos más retrasados utilizando una función de ordenamiento. ¿Cómo quieres manejar los empates? Lee atentamente la documentación de min_rank().
+```{r}
+arrange(flights, arr_delay)
+```
+
+## 4.5 ¿Qué devuelve 1:3 + 1:10? ¿Por qué?
+```{r}
+#[1]  2  4  6  5  7  9  8 10 12 11
+#Warning message:
+#In 1:3 + 1:10 :
+#  longer object length is not a multiple of shorter object length
+#Nos aparece esa expresión ya que los objetos no tienen la misma longitud, por ello R repite el primer vector hasta conseguir una igual longitud, o sea, 1231231231, luego de haber realizado esto se puede hacer la suma de ambas secuencias.
+```
+
+## 4.6 ¿Qué funciones trigonométricas proporciona R?
+```{r}
+#Una forma de consultar cuáles son las funciones trigonométricas es utilizando ‘help(Trig)’, siendo las funciones que proporciona R:
+
+# cos(x), sin(x), tan(x), acos(x), asin(x), atan(x), atan2(x,y), cospi(x), sinpi(x) y tanpi(x).
+```
+
+# 5. Group by & summarize
+## 5.1 Haz una lluvia de ideas de al menos 5 formas diferentes de evaluar las características de un retraso típico de un grupo de vuelos. Considera los siguientes escenarios:
+### Un vuelo llega 15 minutos antes 50% del tiempo, y 15 minutos tarde 50% del tiempo.
+```{r}
+filter(flights, arr_delay > 15) %>%
+  group_by(year, month, day) %>%
+  summarise(vuelo_15min_tarde = quantile(arr_delay, 0.5, na.rm=T))
+filter(flights, arr_delay < 15) %>%
+  group_by(year, month, day) %>%
+  summarise(vuelo_15min_antes = quantile(arr_delay, 0.5, na.rm=T))
+```
+
+### Un vuelo llega siempre 10 minutos tarde.
+```{r}
+filter(flights, arr_delay == 10) %>%
+  group_by(year, month, day, flight)
+```
+
+### Un vuelo llega 30 minutos antes 50% del tiempo, y 30 minutos tarde 50% del tiempo.
+```{r}
+filter(flights, arr_delay > 30) %>%
+  group_by(year, month, day) %>%
+  summarise(vuelo_30min_tarde = quantile(arr_delay, 0.5, na.rm=T))
+
+filter(flights, arr_delay < 30) %>%
+  group_by(year, month, day) %>%
+  summarise(vuelo_15min_antes = quantile(arr_delay, 0.5, na.rm=T))
+```
+
+### Un vuelo llega a tiempo en el 99% de los casos. 1% de las veces llega 2 horas tarde. ¿Qué es más importante: retraso de la llegada o demora de salida?
+```{r}
+filter(flights, arr_delay > 120) %>%
+  group_by(year, month, day) %>%
+  summarise(vuelo_2horas_tarde = quantile(arr_delay, 0.01, na.rm=T))
+
+#Demora de salida porque se puede cancelar tu vuelo o puedes perder varias cosas importantes porque tenías ya un vuelo programado ya preestablecido.
+```
+
+## 5.2 Sugiere un nuevo enfoque que te dé el mismo output que no_cancelados %>% count(destino) y no_cancelado %>% count(codigo_cola, wt = distancia) (sin usar count()).
+```{r}
+no_cancelados <-filter(flights, !is.na(dep_delay), !is.na(arr_delay))
+no_cancelados %>% 
+  count(dest)
+no_cancelados %>% 
+  group_by(dest) %>%
+  summarise(length(dest))
+```
+
+## 5.3 Nuestra definición de vuelos cancelados (is.na(atraso_salida) | is.na (atraso_llegada)) es un poco subóptima. ¿Por qué? ¿Cuál es la columna más importante?
+```{r}
+ funados <- filter(flights, is.na(dep_delay), is.na(arr_delay))
+#Esta es una manera poco convencional de conocer los vuelos cancelados porque filtra los valores no disponibles “NA” del atraso de la salida y de la llegada.
+
+flights %>%
+  group_by(is.na(dep_delay)) %>%
+  summarise(length(dep_delay))
+#Sin embargo, la columna más importante viene a ser el tiempo de vuelo “dep_delay”.
+```
+
+## 5.4 Mira la cantidad de vuelos cancelados por día. ¿Hay un patrón? ¿La proporción de vuelos cancelados está relacionada con el retraso promedio?
+```{r}
+#No, no hay un patrón resaltante en la cantidad de vuelos diarios. 
+flights %>%
+  group_by(is.na(dep_delay)) %>%
+  summarise(mean(dep_delay))
+```
+
+## 5.5 ¿Qué compañía tiene los peores retrasos? Desafío: ¿puedes desenredar el efecto de malos aeropuertos vs. el efecto de malas aerolíneas? ¿Por qué o por qué no? (Sugerencia: piensa en vuelos %>% group_by(aerolinea, destino) %>% summarise(n()))
+```{r}
+arrange(flights, arr_delay) %>%
+  group_by(arr_delay, carrier, dest) %>%
+  summarise()
+```
+
+## 5.6 ¿Qué hace el argumento sort a count(). ¿Cuándo podrías usarlo?
+```{r}
+#El argumento sort en count nos permite mostrar la cantidad de datos de forma descendente con el valor que posee cada variable. 
+#Además,podríamos usarlo si en caso nos pidieran qué día de un mes salieron la mayor cantidad de vuelos.
+flights%>%
+count(day, sort= TRUE)
+```
+
+# 6. Dplyr - transformaciones agrupadas
+## 6.1 Remítete a las listas de funciones útiles de mutación y filtrado. Describe cómo cambia cada operación cuando las combinas con la agrupación.
+```{r}
+#data %>% group_by() %>% filter()
+#Para el group_by nos ayuda en la forma de agrupar y el filter es para poner a una condición a alguna de nuestras variables.
+
+#data %>% filter() %>% mutate() %>% select()
+#filter es para poner una condición a alguna de nuestras variables, mutate es para agregar una columna en función de alguna o algunas columnas existentes y select es para reducir rápidamente a las variables o columnas que solo nos interesan.
+```
+
+## 6.2 ¿Qué avión (codigo_cola) tiene el peor registro de tiempo?
+```{r}
+flights %>%
+  group_by(tailnum, arr_delay) %>%
+  filter(rank(desc(arr_delay)) < 10)
+```
+
+## 6.3 ¿A qué hora del día deberías volar si quieres evitar lo más posible los retrasos?
+```{r}
+vuelos_hm=select(flights,hour, minute, dep_delay, arr_delay)
+
+no_cancelados=vuelos_hm %>% 
+  filter(!is.na(dep_delay),!is.na(arr_delay))
+
+sin_retraso=no_cancelados%>%
+  filter((arr_delay<0) & (dep_delay<0))%>%
+  select(hour,minute,dep_delay,arr_delay)
+arrange(sin_retraso,hour,minute)
+```
+
+## 6.4 Para cada destino, calcula los minutos totales de demora. Para cada vuelo, calcula la proporción de la demora total para su destino.
+```{r}
+vuelos<-flights
+demora<-group_by(vuelos, dest)
+summarise(demora, minutos_de_demora= sum(arr_delay, na.rm =TRUE))
+proporcion_prob<-group_by(vuelos, dest)
+summarise(proporcion_prob, minutos_de_demora=mean(arr_delay, na.rm=TRUE))
+```
+
+## 6.6 Mira cada destino. ¿Puedes encontrar vuelos sospechosamente rápidos? (es decir, vuelos que representan un posible error de entrada de datos). Calcula el tiempo en el aire de un vuelo relativo al vuelo más corto a ese destino. ¿Cuáles vuelos se retrasaron más en el aire?
+```{r}
+flights %>%
+  group_by(dest, air_time) %>%
+  filter(air_time <= 60)
+```
+
+## 6.7 Encuentra todos los destinos que son volados por al menos dos operadores. Usa esta información para clasificar a las aerolíneas.
+```{r}
+flights %>%
+  group_by(dest, carrier) %>%
+  filter(carrier >= 2)
+```
+
+## 6.8 Para cada avión, cuenta el número de vuelos antes del primer retraso de más de 1 hora.
+```{r}
+flights %>%
+  select(dep_delay, tailnum) %>%
+  count(tailnum, dep_delay) %>%
+  group_by(tailnum) %>%
+  filter(dep_delay > 60) %>%
+  summarise(sum(n))
+```
